@@ -2,28 +2,28 @@
   "devDependencies": {
     "typescript": "^5.7.2"
   },
-  "name": "taibeul",
+  "name": "urlchemy",
   "version": "0.0.1",
   "keywords": [
-    "array",
+    "query string",
     "js",
     "javascript",
     "utility",
     "typescript"
   ],
-  "description": "Taibeul is a micro-library to handle arrays",
+  "description": "urlchemy is a micro-library to handle query strings",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thomastoledo/Taibeul.git"
+    "url": "git+https://github.com/thomastoledo/Urlchemy.git"
   },
   "author": "Thomas TOLEDO",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/thomastoledo/Taibeul/issues"
+    "url": "https://github.com/thomastoledo/Urlchemy/issues"
   },
-  "homepage": "https://github.com/thomastoledo/Taibeul#readme"
+  "homepage": "https://github.com/thomastoledo/Urlchemy#readme"
 }

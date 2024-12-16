@@ -1,30 +1,29 @@
-# Taibeul
+# Urlchemy
 
-A lightweight and powerful library for performing advanced operations on JavaScript arrays. Whether you need intersections, unions, differences, or optimized processing of large datasets, **`taibeul`** has you covered!
+**urlchemy** is a lightweight and powerful library for converting objects into query strings and vice versa. With support for nested objects, arrays, and custom serialization options, **urlchemy** turns your URL manipulation into pure alchemy!
 
 ## Features
 
-- ✨ **Intersection, Union, Difference**: Handle array set operations with ease.
-- 🔄 **Remove duplicates**: Keep your arrays unique.
-- ⚡ **Optimized for performance**: Designed for large datasets.
-- 🔍 **Advanced search**: Search with custom predicates.
-- 📋 **Custom sorting**: Flexible sorting with user-defined comparators.
-- 🛠️ **Dependency-free**: Lightweight and fast.
+- ✨ **Bidirectional Conversion**: Convert objects to query strings and query strings to objects.  
+- 🛠 **Nested Object Support**: Handles arrays and deeply nested structures.  
+- 🎛 **Custom Serialization**: Choose how arrays, booleans, and `null` values are handled.  
+- ⚡ **Lightweight and Fast**: Built for performance and simplicity.  
+- 🔄 **Boolean Parsing**: Automatically interpret `"true"` and `"false"` as booleans.  
 
 ---
 
 ## Installation
 
-Install via `npm` or `yarn`:
+Install **urlchemy** via `npm` or `yarn`:
 
 ```bash
-npm install taibeul
+npm install urlchemy
 ```
 
 Or:
 
 ```bash
-yarn add taibeul
+yarn add urlchemy
 ```
 
 ---
@@ -34,160 +33,130 @@ yarn add taibeul
 ### Import the library
 
 ```typescript
-import {
-  intersection,
-  union,
-  difference,
-  unique,
-  customSort,
-  findBy,
-  smartConcat,
-  optimizedDifference
-} from 'taibeul';
+import { toQueryString, parseQueryString } from 'urlchemy';
 ```
 
 ---
 
 ### Examples
 
-#### **1. Intersection**
-
-Find elements common to both arrays:
+#### **1. Convert an Object to a Query String**
 
 ```typescript
-const arr1 = [1, 2, 3];
-const arr2 = [2, 3, 4];
+import { toQueryString } from 'urlchemy';
 
-console.log(intersection(arr1, arr2)); // [2, 3]
+const params = {
+  name: 'Alice',
+  age: 25,
+  hobbies: ['reading', 'coding'],
+  preferences: {
+    theme: 'dark',
+    notifications: true,
+  },
+  empty: null,
+};
+
+const options = {
+  arrayFormat: 'comma', // Arrays will be serialized as comma-separated values
+  booleanFormat: 'numeric', // Booleans will be serialized as 1/0
+  nullFormat: 'omit', // Null values will be omitted
+};
+
+console.log(toQueryString(params, options));
+// Output: "name=Alice&age=25&hobbies=reading,coding&preferences[theme]=dark&preferences[notifications]=1"
 ```
 
 ---
 
-#### **2. Union**
-
-Merge two arrays, keeping only unique values:
+#### **2. Parse a Query String into an Object**
 
 ```typescript
-const arr1 = [1, 2, 3];
-const arr2 = [3, 4, 5];
+import { parseQueryString } from 'urlchemy';
 
-console.log(union(arr1, arr2)); // [1, 2, 3, 4, 5]
+const query = "?name=Alice&active=true&age=25&hobbies[]=reading&hobbies[]=coding";
+
+const result = parseQueryString(query, true);
+
+console.log(result);
+// Output:
+// {
+//   name: "Alice",
+//   active: true,
+//   age: "25",
+//   hobbies: ["reading", "coding"]
+// }
 ```
 
 ---
 
-#### **3. Difference**
+### API Reference
 
-Find elements in one array but not the other:
+#### **`toQueryString(params: Record<string, any>, options?: QueryStringifyOptions): string`**
 
-```typescript
-const arr1 = [1, 2, 3];
-const arr2 = [2, 3, 4];
+Converts an object into a query string.
 
-console.log(difference(arr1, arr2)); // [1]
-```
+- **`params`**: The object to convert.  
+- **`options`**:  
+  - **`arrayFormat`**: Determines how arrays are serialized. Options:  
+    - `'brackets'` (default): `key[]=value1&key[]=value2`.  
+    - `'indices'`: `key[0]=value1&key[1]=value2`.  
+    - `'comma'`: `key=value1,value2`.  
+  - **`booleanFormat`**: Determines how booleans are serialized. Options:  
+    - `'string'` (default): `true`/`false`.  
+    - `'numeric'`: `1`/`0`.  
+  - **`nullFormat`**: Determines how `null` values are serialized. Options:  
+    - `'string'` (default): `key=`.  
+    - `'omit'`: Excludes `null` values from the query string.  
 
----
+#### **`parseQueryString<T = Record<string, any>>(query: string, parseBooleans?: boolean): T`**
 
-#### **4. Remove Duplicates**
+Parses a query string into an object.
 
-Clean up duplicates in an array:
-
-```typescript
-const arr = [1, 1, 2, 3, 3];
-
-console.log(unique(arr)); // [1, 2, 3]
-```
-
----
-
-#### **5. Custom Sorting**
-
-Sort arrays with your own logic:
-
-```typescript
-const arr = [5, 2, 9, 1];
-
-console.log(customSort(arr, (a, b) => a - b)); // [1, 2, 5, 9]
-```
+- **`query`**: The query string to parse.  
+- **`parseBooleans`**: If `true`, converts `"true"`/`"false"` into `true`/`false`. Default: `false`.  
 
 ---
 
-#### **6. Advanced Search**
+### Examples of Options
 
-Find an object in an array using a predicate:
-
-```typescript
-const users = [
-  { id: 1, name: 'Alice' },
-  { id: 2, name: 'Bob' }
-];
-
-console.log(findBy(users, (user) => user.name === 'Alice')); // { id: 1, name: 'Alice' }
-```
-
----
-
-#### **7. Smart Concatenation**
-
-Merge multiple arrays, removing duplicates:
+#### **1. Array Formats**
 
 ```typescript
-const arr1 = [1, 2];
-const arr2 = [2, 3];
-const arr3 = [3, 4];
+const params = { tags: ['js', 'ts', 'html'] };
 
-console.log(smartConcat(arr1, arr2, arr3)); // [1, 2, 3, 4]
+console.log(toQueryString(params, { arrayFormat: 'brackets' }));
+// Output: "tags[]=js&tags[]=ts&tags[]=html"
+
+console.log(toQueryString(params, { arrayFormat: 'indices' }));
+// Output: "tags[0]=js&tags[1]=ts&tags[2]=html"
+
+console.log(toQueryString(params, { arrayFormat: 'comma' }));
+// Output: "tags=js,ts,html"
 ```
 
----
-
-#### **8. Optimized Difference for Large Arrays**
-
-Handle huge datasets efficiently:
+#### **2. Boolean Formats**
 
 ```typescript
-const largeArray1 = Array.from({ length: 1_000_000 }, (_, i) => i);
-const largeArray2 = Array.from({ length: 500_000 }, (_, i) => i * 2);
+const params = { isAdmin: true, isGuest: false };
 
-console.log(optimizedDifference(largeArray1, largeArray2)); // [All odd numbers from 0 to 1,000,000]
+console.log(toQueryString(params, { booleanFormat: 'string' }));
+// Output: "isAdmin=true&isGuest=false"
+
+console.log(toQueryString(params, { booleanFormat: 'numeric' }));
+// Output: "isAdmin=1&isGuest=0"
 ```
 
----
+#### **3. Null Formats**
 
-## API Reference
+```typescript
+const params = { name: 'Alice', age: null };
 
-### **`intersection<T>(array1: T[], array2: T[]): T[]`**
+console.log(toQueryString(params, { nullFormat: 'string' }));
+// Output: "name=Alice&age="
 
-Returns elements common to both arrays.
-
-### **`union<T>(array1: T[], array2: T[]): T[]`**
-
-Returns unique elements from both arrays.
-
-### **`difference<T>(array1: T[], array2: T[]): T[]`**
-
-Returns elements in `array1` that are not in `array2`.
-
-### **`unique<T>(array: T[]): T[]`**
-
-Returns a new array with duplicate values removed.
-
-### **`customSort<T>(array: T[], comparator: (a: T, b: T) => number): T[]`**
-
-Sorts an array using a custom comparator function.
-
-### **`findBy<T>(array: T[], predicate: (item: T) => boolean): T | undefined`**
-
-Returns the first element matching the predicate.
-
-### **`smartConcat<T>(...arrays: T[][]): T[]`**
-
-Merges multiple arrays into one, removing duplicates.
-
-### **`optimizedDifference<T>(array1: T[], array2: T[]): T[]`**
-
-Finds the difference between two arrays using a `Set` for efficiency.
+console.log(toQueryString(params, { nullFormat: 'omit' }));
+// Output: "name=Alice"
+```
 
 ---
 
@@ -199,4 +168,4 @@ MIT
 
 ## Contributing
 
-Contributions are welcome! Feel free to open issues or submit pull requests.  
+Contributions are welcome! If you spot an issue or have an idea for improvement, feel free to open an issue or submit a pull request. 😊

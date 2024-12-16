@@ -10,7 +10,7 @@
     },
     "include": [
       "index.ts",
-      "taibeul.ts"                           
+      "urlchemy.ts"                           
     ],
     "exclude": [
       "node_modules"                          
