@@ -1,171 +1,170 @@
-# Urlchemy
-
-**urlchemy** is a lightweight and powerful library for converting objects into query strings and vice versa. With support for nested objects, arrays, and custom serialization options, **urlchemy** turns your URL manipulation into pure alchemy!
-
-## Features
-
-- ✨ **Bidirectional Conversion**: Convert objects to query strings and query strings to objects.  
-- 🛠 **Nested Object Support**: Handles arrays and deeply nested structures.  
-- 🎛 **Custom Serialization**: Choose how arrays, booleans, and `null` values are handled.  
-- ⚡ **Lightweight and Fast**: Built for performance and simplicity.  
-- 🔄 **Boolean Parsing**: Automatically interpret `"true"` and `"false"` as booleans.  
+### **README for URLchemy**
 
 ---
 
-## Installation
+# **URLchemy**
 
-Install **urlchemy** via `npm` or `yarn`:
+**URLchemy** is a lightweight and flexible utility library for working with query strings in JavaScript and TypeScript. It provides:
+- **Object to Query String Conversion**: Convert JavaScript objects into URL-safe query strings.
+- **Query String to Object Parsing**: Parse query strings back into JavaScript objects.
+- Support for **arrays**, **nested objects**, and **advanced options** for encoding, sorting, and strict formatting.
+
+---
+
+## **Features**
+
+- 🔄 **Bidirectional conversion**: Easily switch between objects and query strings.
+- 🧩 **Nested structures**: Works with arrays and deeply nested objects.
+- 🎛 **Configurable**: Customize the encoding, sorting, and formatting of query strings.
+- 🌐 **URL-safe**: Automatically encodes keys and values for safe use in URLs.
+
+---
+
+## **Installation**
+
+Install URLchemy using **npm** or **yarn**:
 
 ```bash
 npm install urlchemy
 ```
 
-Or:
-
-```bash
-yarn add urlchemy
-```
-
 ---
 
-## Usage
+## **Usage**
 
-### Import the library
-
+### **1. Convert an object to a query string**
 ```typescript
-import { toQueryString, parseQueryString } from 'urlchemy';
-```
-
----
-
-### Examples
-
-#### **1. Convert an Object to a Query String**
-
-```typescript
-import { toQueryString } from 'urlchemy';
+import { objectToQueryString } from 'urlchemy';
 
 const params = {
-  name: 'Alice',
-  age: 25,
-  hobbies: ['reading', 'coding'],
-  preferences: {
-    theme: 'dark',
-    notifications: true,
+  user: {
+    id: 123,
+    name: 'John Doe',
   },
-  empty: null,
+  tags: ['developer', 'programmer'],
 };
 
-const options = {
-  arrayFormat: 'comma', // Arrays will be serialized as comma-separated values
-  booleanFormat: 'numeric', // Booleans will be serialized as 1/0
-  nullFormat: 'omit', // Null values will be omitted
+const queryString = objectToQueryString(params, { encode: true });
+console.log(queryString);
+// Output: user%5Bid%5D=123&user%5Bname%5D=John%20Doe&tags=developer&tags=programmer
+```
+
+### **2. Parse a query string into an object**
+```typescript
+import { queryStringToObject } from 'urlchemy';
+
+const query = '?user%5Bid%5D=123&user%5Bname%5D=John%20Doe&tags=developer&tags=programmer';
+const parsedObject = queryStringToObject(query);
+
+console.log(parsedObject);
+// Output: { user: { id: '123', name: 'John Doe' }, tags: ['developer', 'programmer'] }
+```
+
+### **3. Add advanced options**
+```typescript
+const params = {
+  user: {
+    id: 123,
+    name: 'John Doe',
+  },
+  tags: ['developer', 'programmer'],
+  active: true,
+  date: new Date('2023-01-01'),
 };
 
-console.log(toQueryString(params, options));
-// Output: "name=Alice&age=25&hobbies=reading,coding&preferences[theme]=dark&preferences[notifications]=1"
+const queryString = objectToQueryString(params, {
+  encode: true,
+  strict: true,
+  prefix: true,
+  excludeNulls: true,
+  sort: true,
+});
+
+console.log(queryString);
+// Output: ?active=true&date=2023-01-01T00%3A00%3A00.000Z&tags=developer&tags=programmer&user.id=123&user.name=John%20Doe
 ```
 
 ---
 
-#### **2. Parse a Query String into an Object**
+## **API**
 
+### **`objectToQueryString(params, options?)`**
+Converts a JavaScript object to a query string.
+
+- **`params`** *(Record<string, any>)*: The object to convert.
+- **`options`** *(StringifyOptions)* *(optional)*:
+  - `encode` *(boolean)*: Encode keys and values (default: `true`).
+  - `sort` *(boolean)*: Sort keys alphabetically (default: `false`).
+  - `strict` *(boolean)*: Use dot notation for nested keys (default: `false`).
+  - `prefix` *(boolean)*: Add a `?` prefix to the string (default: `false`).
+  - `excludeNulls` *(boolean)*: Exclude `null` or `undefined` values (default: `false`).
+
+---
+
+### **`queryStringToObject(query)`**
+Parses a query string into a JavaScript object.
+
+- **`query`** *(string)*: The query string to parse (e.g., `?key=value&arr=1&arr=2`).
+
+---
+
+## **Advanced Examples**
+
+### **Handle arrays and nested objects**
 ```typescript
-import { parseQueryString } from 'urlchemy';
+const params = {
+  filters: {
+    category: 'books',
+    price: {
+      min: 10,
+      max: 50,
+    },
+  },
+  tags: ['fiction', 'mystery'],
+};
 
-const query = "?name=Alice&active=true&age=25&hobbies[]=reading&hobbies[]=coding";
+const queryString = objectToQueryString(params, {encode: false});
+console.log(queryString);
+// Output: filters[category]=books&filters[price][min]=10&filters[price][max]=50&tags=fiction&tags=mystery
+```
 
-const result = parseQueryString(query, true);
+---
 
-console.log(result);
+### **Decode complex query strings**
+```typescript
+const query = '?filters[category]=books&filters[price][min]=10&filters[price][max]=50&tags=fiction&tags=mystery';
+const parsedObject = queryStringToObject(query);
+
+console.log(parsedObject);
 // Output:
 // {
-//   name: "Alice",
-//   active: true,
-//   age: "25",
-//   hobbies: ["reading", "coding"]
+//   filters: {
+//     category: 'books',
+//     price: { min: '10', max: '50' },
+//   },
+//   tags: ['fiction', 'mystery'],
 // }
 ```
 
 ---
 
-### API Reference
+## **Roadmap**
 
-#### **`toQueryString(params: Record<string, any>, options?: QueryStringifyOptions): string`**
-
-Converts an object into a query string.
-
-- **`params`**: The object to convert.  
-- **`options`**:  
-  - **`arrayFormat`**: Determines how arrays are serialized. Options:  
-    - `'brackets'` (default): `key[]=value1&key[]=value2`.  
-    - `'indices'`: `key[0]=value1&key[1]=value2`.  
-    - `'comma'`: `key=value1,value2`.  
-  - **`booleanFormat`**: Determines how booleans are serialized. Options:  
-    - `'string'` (default): `true`/`false`.  
-    - `'numeric'`: `1`/`0`.  
-  - **`nullFormat`**: Determines how `null` values are serialized. Options:  
-    - `'string'` (default): `key=`.  
-    - `'omit'`: Excludes `null` values from the query string.  
-
-#### **`parseQueryString<T = Record<string, any>>(query: string, parseBooleans?: boolean): T`**
-
-Parses a query string into an object.
-
-- **`query`**: The query string to parse.  
-- **`parseBooleans`**: If `true`, converts `"true"`/`"false"` into `true`/`false`. Default: `false`.  
+### **Ideas for Future Features**
+1. **Custom serializers**: Allow users to define how specific types (e.g., Dates) should be serialized.
+2. **Type-safe parsing**: Infer and maintain type safety when converting query strings back to objects.
+3. **Enhanced array support**: Add options for serializing arrays as comma-separated values (`tags=fiction,mystery`).
+4. **Internationalization**: Improved handling for non-UTF-8 character encodings.
+5. **Integration with TimePulse**: Add support for time-sensitive URL queries using [TimePulse](https://github.com/thomastoledo/timepulse).
 
 ---
 
-### Examples of Options
+## **Contributing**
 
-#### **1. Array Formats**
-
-```typescript
-const params = { tags: ['js', 'ts', 'html'] };
-
-console.log(toQueryString(params, { arrayFormat: 'brackets' }));
-// Output: "tags[]=js&tags[]=ts&tags[]=html"
-
-console.log(toQueryString(params, { arrayFormat: 'indices' }));
-// Output: "tags[0]=js&tags[1]=ts&tags[2]=html"
-
-console.log(toQueryString(params, { arrayFormat: 'comma' }));
-// Output: "tags=js,ts,html"
-```
-
-#### **2. Boolean Formats**
-
-```typescript
-const params = { isAdmin: true, isGuest: false };
-
-console.log(toQueryString(params, { booleanFormat: 'string' }));
-// Output: "isAdmin=true&isGuest=false"
-
-console.log(toQueryString(params, { booleanFormat: 'numeric' }));
-// Output: "isAdmin=1&isGuest=0"
-```
-
-#### **3. Null Formats**
-
-```typescript
-const params = { name: 'Alice', age: null };
-
-console.log(toQueryString(params, { nullFormat: 'string' }));
-// Output: "name=Alice&age="
-
-console.log(toQueryString(params, { nullFormat: 'omit' }));
-// Output: "name=Alice"
-```
+Contributions are welcome! Feel free to submit **issues** or **pull requests** if you have ideas or encounter bugs.
 
 ---
 
-## License
+## **License**
 
-MIT
-
----
-
-## Contributing
-
-Contributions are welcome! If you spot an issue or have an idea for improvement, feel free to open an issue or submit a pull request. 😊
+URLchemy is licensed under the MIT License. 🌐✨
