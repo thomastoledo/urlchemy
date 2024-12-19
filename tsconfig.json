@@ -1,18 +1,18 @@
 {
-    "compilerOptions": {
-      "target": "ESNext",                       
-      "module": "commonjs",                  
-      "outDir": "./dist",                     
-      "rootDir": "./",                        
-      "strict": true,                         
-      "esModuleInterop": true,                
-      "skipLibCheck": true                    
-    },
-    "include": [
-      "index.ts",
-      "urlchemy.ts"                           
-    ],
-    "exclude": [
-      "node_modules"                          
-    ]
-  }
+  "compilerOptions": {
+    "target": "ESNext",                       
+    "module": "commonjs",                  
+    "outDir": "./dist",                     
+    "rootDir": "./",                        
+    "strict": true,                         
+    "esModuleInterop": true,                
+    "skipLibCheck": true                    
+  },
+  "include": [
+    "index.ts",
+    "urlchemy.ts"                           
+  ],
+  "exclude": [
+    "node_modules"                          
+  ]
+}
